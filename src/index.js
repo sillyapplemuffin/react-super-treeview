@@ -25,6 +25,7 @@ class SuperTreeview extends Component {
 
         this.printCheckbox = this.printCheckbox.bind(this);
         this.printDeleteButton = this.printDeleteButton.bind(this);
+        this.printDescription = this.printDescription.bind(this);
         this.printExpandButton = this.printExpandButton.bind(this);
         this.printNoChildrenMessage = this.printNoChildrenMessage.bind(this);
 
@@ -134,6 +135,17 @@ class SuperTreeview extends Component {
         }
     }
 
+    printDescription(node) {
+        // TODO[MLE]
+        const { hasDescription, depth, descriptionElement } = this.props;
+
+        if (hasDescription(node, depth)) {
+            return (
+                <descriptionElement description={get(node, keywordDescription, '')}></descriptionElement>
+            );
+        }
+    }
+
     printExpandButton(node) {
         const className = node.isExpanded
             ? 'super-treeview-triangle-btn-down'
@@ -196,6 +208,7 @@ class SuperTreeview extends Component {
             printExpandButton,
             printCheckbox,
             printDeleteButton,
+            printDescription,
             printChildren
         } = this;
 
@@ -239,6 +252,7 @@ class SuperTreeview extends Component {
                                               {nodeText}
                                           </label>
                                           {printDeleteButton(node, depth)}
+                                          {printDescription(node, depth)}
                                       </div>
                                       {printChildren(node)}
                                   </div>
@@ -305,12 +319,14 @@ SuperTreeview.propTypes = {
 
     isCheckable: PropTypes.func,
     isDeletable: PropTypes.func,
+    hasDescription: PropTypes.func,
     isExpandable: PropTypes.func,
 
     keywordChildren: PropTypes.string,
     keywordChildrenLoading: PropTypes.string,
     keywordKey: PropTypes.string,
     keywordLabel: PropTypes.string,
+    keywordDescription: PropTypes.string,
 
     loadingElement: PropTypes.element,
     noChildrenAvailableMessage: PropTypes.string,
@@ -327,7 +343,9 @@ SuperTreeview.propTypes = {
 SuperTreeview.defaultProps = {
     depth: 0,
 
-    deleteElement: <div>(X)</div>,
+    deleteElement: <div>(PONEY)</div>,
+
+    descriptionElement: (props) => { return <div>Description: {props.description}</div> },
 
     getStyleClassCb: (/* node, depth */) => {
         return '';
@@ -338,6 +356,9 @@ SuperTreeview.defaultProps = {
     isDeletable: (/* node, depth */) => {
         return true;
     },
+    hasDescription: (/* node, depth */) => {
+        return true;
+    },
     isExpandable: (/* node, depth */) => {
         return true;
     },
@@ -345,6 +366,7 @@ SuperTreeview.defaultProps = {
     keywordChildren: 'children',
     keywordChildrenLoading: 'isChildrenLoading',
     keywordLabel: 'name',
+    keywordDescription: 'description',
     keywordKey: 'id',
 
     loadingElement: <div>loading...</div>,
