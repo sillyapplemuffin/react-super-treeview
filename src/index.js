@@ -25,6 +25,7 @@ class SuperTreeview extends Component {
 
         this.printCheckbox = this.printCheckbox.bind(this);
         this.printDeleteButton = this.printDeleteButton.bind(this);
+        this.printDescription = this.printDescription.bind(this);
         this.printExpandButton = this.printExpandButton.bind(this);
         this.printNoChildrenMessage = this.printNoChildrenMessage.bind(this);
 
@@ -134,6 +135,20 @@ class SuperTreeview extends Component {
         }
     }
 
+    printDescription(node) {
+        const { keywordData } = this.props;
+        const nodeData = get(node, keywordData, undefined);
+
+        if(!nodeData && !(this.props.children instanceof Function)) {
+            return null;
+        }
+
+        // TODO Handle array case with React.Children.toArray or React.Children.map             
+        return (
+            <div className="super-treeview-description">{this.props.children(nodeData)}</div>
+        );
+    }
+
     printExpandButton(node) {
         const className = node.isExpanded
             ? 'super-treeview-triangle-btn-down'
@@ -197,6 +212,7 @@ class SuperTreeview extends Component {
             printExpandButton,
             printCheckbox,
             printDeleteButton,
+            printDescription,
             printChildren
         } = this;
 
@@ -215,43 +231,44 @@ class SuperTreeview extends Component {
         console.log("keywordData", keywordData)
         console.log("nodeArray", nodeArray)
 
+        console.log("React.Children.toArray(this.props.children)", this.props.children, React.Children.toArray(this.props.children))
+
         return (
             <TransitionGroup>
                 {isEmpty(nodeArray)
                     ? this.printNoChildrenMessage()
                     : nodeArray.map((node, index) => {
-                          const nodeText = get(node, keywordLabel, '');
-                          const nodeData = get(node, keywordData, '');
+                        const nodeText = get(node, keywordLabel, '');
 
-                          return (
-                              <CSSTransition
-                                  {...nodeTransitionProps}
-                                  key={node[keywordKey] || index}
-                              >
-                                  <div
-                                      className={
-                                          'super-treeview-node' +
-                                          getStyleClassCb(node)
-                                      }
-                                  >
-                                      <div className="super-treeview-node-content">
-                                          {printExpandButton(node, depth)}
-                                          {printCheckbox(node, depth)}
-                                          <label
-                                              htmlFor={node.id}
-                                              title={nodeText}
-                                              className="super-treeview-text"
-                                          >
-                                              {nodeText}
-                                          </label>
-                                          {printDeleteButton(node, depth)}
-                                          {this.props.children(nodeData)}
-                                      </div>
-                                      {printChildren(node)}
-                                  </div>
-                              </CSSTransition>
-                          );
-                      })}
+                        return (
+                            <CSSTransition
+                                {...nodeTransitionProps}
+                                key={node[keywordKey] || index}
+                            >
+                                <div
+                                    className={
+                                        'super-treeview-node' +
+                                        getStyleClassCb(node)
+                                    }
+                                >
+                                    <div className="super-treeview-node-content">
+                                        {printExpandButton(node, depth)}
+                                        {printCheckbox(node, depth)}
+                                        <label
+                                            htmlFor={node.id}
+                                            title={nodeText}
+                                            className="super-treeview-text"
+                                        >
+                                            {nodeText}
+                                        </label>
+                                        {printDeleteButton(node, depth)}
+                                        {printDescription(node, depth)}
+                                    </div>
+                                    {printChildren(node)}
+                                </div>
+                            </CSSTransition>
+                        );
+                    })}
             </TransitionGroup>
         );
     }
@@ -360,10 +377,10 @@ SuperTreeview.defaultProps = {
 
     noChildrenAvailableMessage: 'No data found',
 
-    onCheckToggleCb: (/* Array of nodes, depth */) => {},
+    onCheckToggleCb: (/* Array of nodes, depth */) => { },
     onDeleteCb: (/* node, updatedData, depth */) => { return true },
-    onExpandToggleCb: (/* node, depth */) => {},
-    onUpdateCb: (/* updatedData, depth */) => {},
+    onExpandToggleCb: (/* node, depth */) => { },
+    onUpdateCb: (/* updatedData, depth */) => { },
 
     transitionEnterTimeout: 1200,
     transitionExitTimeout: 1200
