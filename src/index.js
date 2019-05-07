@@ -139,7 +139,9 @@ class SuperTreeview extends Component {
         const { keywordData } = this.props;
         const nodeData = get(node, keywordData, undefined);
 
-        if(!nodeData && !(this.props.children instanceof Function)) {
+        console.log(this.props.children, nodeData)
+
+        if(!nodeData || !(this.props.children instanceof Function)) {
             return null;
         }
 
@@ -202,7 +204,6 @@ class SuperTreeview extends Component {
         const {
             keywordKey,
             keywordLabel,
-            keywordData,
             depth,
             transitionEnterTimeout,
             transitionExitTimeout,
