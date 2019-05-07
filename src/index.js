@@ -227,12 +227,6 @@ class SuperTreeview extends Component {
             }
         };
 
-        console.log("this.props", this.props)
-        console.log("keywordData", keywordData)
-        console.log("nodeArray", nodeArray)
-
-        console.log("React.Children.toArray(this.props.children)", this.props.children, React.Children.toArray(this.props.children))
-
         return (
             <TransitionGroup>
                 {isEmpty(nodeArray)
